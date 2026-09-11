@@ -1,0 +1,141 @@
+contract:
+  name: viaplay-content-contract
+  version: 1
+  provider: viaplay
+  source_format: json-ld
+  description: >-
+    Example source contract that can be used to derive viaplay.rules.yaml.
+
+sampling:
+  sample_size: 25
+  random_seed: 42
+
+quality_policy:
+  required_languages:
+    - en
+  min_description_words: 3
+  placeholder_descriptions:
+    - n/a
+    - na
+    - tbd
+    - todo
+    - description
+  required_image_ratios:
+    - "16:9"
+  undefined_image_types:
+    - ""
+    - undefined
+    - staple
+    - unknown
+    - null
+  episode_count_thresholds:
+    min: 1
+    max: 500
+
+field_contract:
+  identity:
+    required_any_of:
+      - contentId
+      - guid
+  content_type:
+    optional_any_of:
+      - "@type"
+      - type
+      - contentType
+      - content_type
+      - level
+      - entityType
+  provider_group:
+    optional_any_of:
+      - group
+      - package
+      - providerGroup
+      - provider_group
+  kids_flag:
+    optional_any_of:
+      - isKids
+      - kids
+      - audience
+      - targetAudience
+      - category
+  title:
+    recommended_any_of:
+      - title
+      - name
+      - name/original
+  description:
+    recommended_any_of:
+      - description
+      - shortDescription
+  descriptions_block:
+    optional_any_of:
+      - descriptions
+      - localized.descriptions
+      - i18n.descriptions
+  images:
+    recommended_any_of:
+      - images
+      - image
+  image_type:
+    optional_any_of:
+      - type
+      - name
+  image_ratio:
+    optional_any_of:
+      - ratio
+  genre:
+    recommended_any_of:
+      - genres
+      - genre
+  production_year:
+    recommended_any_of:
+      - productionYear
+      - releasedEvent.startDate
+  duration:
+    recommended_any_of:
+      - duration
+  age_rating:
+    recommended_any_of:
+      - ageRating
+      - contentRating.ratingValue
+  deeplink:
+    recommended_any_of:
+      - deeplink
+      - potentialAction
+  series_id:
+    optional_any_of:
+      - partOfSeries.guid
+      - series.guid
+  season_id:
+    optional_any_of:
+      - partOfSeason.guid
+      - season.guid
+  episode_id:
+    optional_any_of:
+      - episodeNumber
+
+rule_derivation:
+  id_keys: field_contract.identity.required_any_of
+  type_keys: field_contract.content_type.optional_any_of
+  provider_group_keys: field_contract.provider_group.optional_any_of
+  kids_flags_keys: field_contract.kids_flag.optional_any_of
+  candidate_keys:
+    title: field_contract.title.recommended_any_of
+    description: field_contract.description.recommended_any_of
+    descriptions_block: field_contract.descriptions_block.optional_any_of
+    images: field_contract.images.recommended_any_of
+    image_type: field_contract.image_type.optional_any_of
+    image_ratio: field_contract.image_ratio.optional_any_of
+    genre: field_contract.genre.recommended_any_of
+    production_year: field_contract.production_year.recommended_any_of
+    duration: field_contract.duration.recommended_any_of
+    age_rating: field_contract.age_rating.recommended_any_of
+    deeplink: field_contract.deeplink.recommended_any_of
+    series_id: field_contract.series_id.optional_any_of
+    season_id: field_contract.season_id.optional_any_of
+    episode_id: field_contract.episode_id.optional_any_of
+
+notes:
+  - This file is an example contract input.
+  - The current rules output equivalent is configs/providers/viaplay/viaplay.rules.yaml.
+  - If values in this contract change, regenerate or manually update viaplay.rules.yaml.

@@ -1,0 +1,117 @@
+sample_size: 25
+random_seed: 42
+
+required_languages:
+  - en
+
+min_description_words: 3
+
+placeholder_descriptions:
+  - n/a
+  - na
+  - tbd
+  - todo
+  - description
+required_image_ratios:
+  - "16:9"
+  - "2:3"
+
+undefined_image_types:
+  - ""
+  - undefined
+  - staple
+  - unknown
+  - null
+id_keys:
+  - guid
+  - contentId
+  - originalContentId
+  - timelineId
+
+# Keep checks focused on requested conversion mapping checks.
+disabled_converted_checks:
+  - conv_event_expired
+  - conv_event_not_yet_valid
+  - conv_schedule_required_field_missing
+  - conv_schedule_original_channel_id_invalid
+  - conv_schedule_adapter_id_invalid
+  - conv_envelope_required_field_missing
+  - conv_content_id_missing
+  - conv_broadcast_required_field_missing
+  - conv_event_required_field_missing
+  - conv_duplicate_broadcast_id
+  - conv_broadcast_content_reference_invalid
+  - conv_epg_from_to_dates_invalid
+  - conv_epg_to_date_format_invalid
+  - conv_broadcast_gap_between
+  - conv_broadcast_overlap_start
+  - conv_broadcast_overlap_end
+  - conv_broadcast_rerun_live_premiere_conflict
+  - conv_schedule_duration_exceeds_24h
+  - conv_image_url_invalid
+  - conv_image_dimensions_invalid
+  - conv_country_code_invalid
+  - conv_language_code_invalid
+  - conv_vod_deeplinks_for_non_deeplink
+  - conv_vod_id_invalid
+  - conv_publishing_rights_missing
+  - conv_publishing_no_valid_targets
+
+# Keep checks focused on requested original quality checks.
+disabled_original_checks:
+  - orig_event_future
+  - orig_empty_metadata
+  - orig_schedule_required_field_missing
+  - orig_schedule_original_channel_id_invalid
+  - orig_schedule_adapter_id_invalid
+  - orig_envelope_required_field_missing
+  - orig_content_id_missing
+  - orig_broadcast_required_field_missing
+  - orig_event_required_field_missing
+  - orig_duplicate_broadcast_id
+  - orig_broadcast_content_reference_invalid
+  - orig_epg_from_to_dates_invalid
+  - orig_epg_to_date_format_invalid
+  - orig_broadcast_gap_between
+  - orig_broadcast_overlap_start
+  - orig_broadcast_overlap_end
+  - orig_broadcast_rerun_live_premiere_conflict
+  - orig_schedule_duration_exceeds_24h
+  - orig_image_url_invalid
+  - orig_image_dimensions_invalid
+  - orig_country_code_invalid
+  - orig_language_code_invalid
+  - orig_vod_deeplinks_for_non_deeplink
+  - orig_vod_id_invalid
+  - orig_publishing_rights_missing
+  - orig_publishing_no_valid_targets
+  - orig_age_rating_out_of_range
+
+type_keys:
+  - '@type'
+
+provider_group_keys:
+  - group
+  - package
+  - providerGroup
+
+candidate_keys:
+  title:
+    - name
+    - alternateName
+    - name/original
+  description:
+    - description
+    - disambiguatingDescription
+  descriptions_block:
+    - descriptions
+  images:
+    - image
+  image_type:
+    - name
+  image_ratio:
+    - name
+  genre:
+    - sport
+    - sportsLeague
+

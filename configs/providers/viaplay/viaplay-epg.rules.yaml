@@ -1,0 +1,213 @@
+# Rules config for viaplay-epg (Viaplay Sweden linear channels)
+# Viaplay Classics  | Global Channel ID: 88 | Swedish ID: se.viaplay.classics | Store ID: 9033
+# Viaplay Crime     | Global Channel ID: 89 | Swedish ID: se.viaplay.crime     | Store ID: 9034
+# Catch-up: 7 days | Startover: Yes
+
+sample_size: 25
+random_seed: 42
+
+required_languages: []
+
+min_description_words: 3
+
+placeholder_descriptions:
+  - n/a
+  - na
+  - tbd
+  - todo
+  - description
+
+required_image_ratios:
+  - "16:9"
+  - "2:3"
+
+# Provider-side converter prerequisites for original XML image records:
+# 1) image@type must be one of: content/season/series
+# 2) imageRef@width and imageRef@height must be numeric > 0
+# 3) imageRef text (URL/value) is required
+provider_required_image_types:
+  - content
+  - season
+  - series
+
+undefined_image_types:
+  - ""
+  - undefined
+  - staple
+  - unknown
+  - null
+
+episode_count_thresholds:
+  min: 1
+  max: 500
+
+# Viaplay source uses JSON-LD format
+id_keys:
+  - guid
+  - contentId
+  - originalContentId
+  - timelineId
+
+required_envelope_fields:
+  epg: []
+
+max_asset_duration_seconds: 21600
+
+# Keep checks focused on requested conversion mapping checks.
+disabled_converted_checks:
+  - conv_event_expired
+  - conv_event_not_yet_valid
+  - conv_schedule_required_field_missing
+  - conv_schedule_original_channel_id_invalid
+  - conv_schedule_adapter_id_invalid
+  - conv_envelope_required_field_missing
+  - conv_content_id_missing
+  - conv_broadcast_required_field_missing
+  - conv_event_required_field_missing
+  - conv_duplicate_broadcast_id
+  - conv_broadcast_content_reference_invalid
+  - conv_epg_from_to_dates_invalid
+  - conv_epg_to_date_format_invalid
+  - conv_broadcast_gap_between
+  - conv_broadcast_overlap_start
+  - conv_broadcast_overlap_end
+  - conv_broadcast_rerun_live_premiere_conflict
+  - conv_schedule_duration_exceeds_24h
+  - conv_image_url_invalid
+  - conv_image_dimensions_invalid
+  - conv_country_code_invalid
+  - conv_language_code_invalid
+  - conv_vod_deeplinks_for_non_deeplink
+  - conv_vod_id_invalid
+  - conv_publishing_rights_missing
+  - conv_publishing_no_valid_targets
+  # EPG-specific: image type names differ between original XML and converted JSON schemas
+  - conv_image_type_mapping
+  # Temporarily disabled: converted genre enums are broader than internal contract and create high noise
+  - conv_genre_mapping
+  # Hierarchy-level genres are often inherited from content-level in this feed
+  - conv_hierarchy_genre_missing
+  # EPG-specific: duration lives in schedules[].broadcasts, not in contents[0]
+  - conv_duration_mapping
+
+# Keep checks focused on requested original quality checks.
+disabled_original_checks:
+  - orig_event_future
+  - orig_empty_metadata
+  - orig_schedule_required_field_missing
+  - orig_schedule_original_channel_id_invalid
+  - orig_schedule_adapter_id_invalid
+  - orig_envelope_required_field_missing
+  - orig_content_id_missing
+  - orig_broadcast_required_field_missing
+  - orig_event_required_field_missing
+  - orig_duplicate_broadcast_id
+  - orig_epg_to_date_format_invalid
+  - orig_broadcast_rerun_live_premiere_conflict
+  # Hierarchy-level genres are often inherited from content-level in this feed
+  - orig_hierarchy_genre_presence
+  - orig_country_code_invalid
+  - orig_language_code_invalid
+  - orig_vod_deeplinks_for_non_deeplink
+  - orig_vod_id_invalid
+  - orig_publishing_rights_missing
+  - orig_publishing_no_valid_targets
+  - orig_age_rating_out_of_range
+
+type_keys:
+  - '@type'
+
+provider_group_keys:
+  - group
+  - package
+  - providerGroup
+
+kids_flags_keys:
+  - isKids
+  - kids
+  - audience
+  - targetAudience
+  - category
+
+# Field names below match actual XML element names in the Viaplay EPG feed:
+# <titleList>/<title language=".." type="..">  → title
+# <descriptionList>/<description ..>           → description
+# <genreList>/<genre>/<mainGenre>               → mainGenre
+# <genreList>/<genre>/<subGenreList>/<subGenre> → subGenre
+# <parentalRating>                              → parentalRating
+# <productionYear>                              → productionYear
+# <seriesId>                                    → seriesId
+# <seasonNumber>                                → seasonNumber
+# <episodeNumber>                               → episodeNumber
+# <imageList>/<image>/<imageRef>                → images (built by XML parser)
+candidate_keys:
+  title:
+    - title           # <title> elements inside <titleList>
+    - name
+    - alternateName
+  description:
+    - description     # <description> elements inside <descriptionList>
+    - disambiguatingDescription
+  descriptions_block:
+    - descriptions
+  images:
+    - images          # structured list built by XML parser from <imageList>
+    - image
+  image_type:
+    - type
+    - name
+  image_ratio:
+    - ratio
+    - name
+  genre:
+    - mainGenre       # <mainGenre> elements in original XML
+    - subGenre        # <subGenre> elements in original XML
+    - genre
+    - genres          # converted: contents[0].genres
+  production_year:
+    - productionYear  # <productionYear> in original; contents[0].productionYear in converted
+    - releasedEvent.startDate
+  duration:
+    - duration        # broadcast duration (HH:MM:SS in original events)
+  age_rating:
+    - parentalRating  # <parentalRating> in original XML
+    - ageRatings      # converted: contents[0].ageRatings (array)
+    - contentRating.ratingValue
+    - ageRating
+  deeplink:
+    - potentialAction
+    - deeplink
+  series_id:
+    - seriesId        # <seriesId> in original; contents[0].series.id in converted
+    - series.id
+    - partOfSeries.guid
+    - series.guid
+  season_id:
+    - seasonNumber    # <seasonNumber> in original
+    - season.seasonNumber
+    - partOfSeason.guid
+    - season.guid
+  episode_id:
+    - episodeNumber   # <episodeNumber> in original; contents[0].episodeNumber in converted
+
+# Schedule-level fields required by contract (src/schema/parts/schedule.json)
+# channelId, adapterId, originalChannelId, from, to, date, broadcasts — all required
+# For SE channels, originalChannelId must be se.viaplay.classics or se.viaplay.crime
+schedule_required_fields:
+  - channelId
+  - adapterId
+  - originalChannelId
+  - from
+  - to
+  - date
+  - broadcasts
+
+schedule_allowed_original_channel_ids:
+  - se.viaplay.classics
+  - se.viaplay.crime
+
+schedule_expected_adapter_ids:
+  - viaplay-epg
+
+# Run schedule assertions only when the payload is schedule-shaped.
+schedule_only_records: true

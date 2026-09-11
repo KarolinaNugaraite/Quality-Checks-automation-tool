@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metadata Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css', v=static_version) }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Metadata Checker</h1>
+        <p>Original & Converted Metadata Quality Checks</p>
+      </header>
+
+      <!-- Main Application Navigation Tabs -->
+      <nav class="app-main-tabs" role="tablist" aria-label="Main Navigation">
+        <button type="button" class="app-main-tab-btn active" data-tab="checksTabPane" id="tabNavChecks">
+          📄 Quality Checks
+        </button>
+        <button type="button" class="app-main-tab-btn" data-tab="analyticsTabPane" id="tabNavAnalytics">
+          📊 Visual Analytics Dashboard <span id="analyticsTabBadge" class="tab-badge-pill hidden">0</span>
+        </button>
+        <button type="button" class="app-main-tab-btn" data-tab="groupingTabPane" id="tabNavGrouping">
+          🔗 Grouping Checker
+        </button>
+        <button type="button" class="app-main-tab-btn hidden" data-tab="ingestionTabPane" id="tabNavIngestion">
+          🧪 Ingestion Tests
+        </button>
+      </nav>
+
+      <main>
+        <!-- Tab Pane 1: Quality Checks Form & Findings -->
+        <div id="checksTabPane" class="app-tab-pane active">
+          <section class="unified-section">
+            <h2>Metadata Quality Checks</h2>
+            <p>
+              Upload your metadata files to check for quality issues and
+              validation errors.
+            </p>
+          <div class="selector-row">
+            <!-- Adapter type filter (EPG / VOD / Event) -->
+            <div class="type-filter-group" id="providerTypeFilter" role="group" aria-label="Filter providers by content type">
+              <button type="button" class="type-filter-btn" data-provider-type="epg">EPG</button>
+              <button type="button" class="type-filter-btn" data-provider-type="vod">VOD</button>
+              <button type="button" class="type-filter-btn" data-provider-type="event">Event</button>
+            </div>
+
+            <!-- Country selector -->
+            <div class="dropdown" id="countryDropdownContainer">
+              <button
+                id="countryToggle"
+                class="provider-select btn dropbtn"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="Select a country"
+              >
+                <span class="provider-select-left" id="countryLabel">Select a country</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div id="countryDropdown" class="dropdown-content" role="menu" aria-label="Country selection"></div>
+            </div>
+
+            <!-- Provider selector -->
+            <div class="dropdown hidden" id="providerDropdownContainer">
+              <button
+                id="providerToggle"
+                class="provider-select btn dropbtn"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="Select a provider"
+              >
+                <span class="provider-select-left" id="providerLabel">Select a provider</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div id="myDropdown" class="dropdown-content" role="menu" aria-label="Provider selection"></div>
+            </div>
+
+            <!-- Channel selector (shown only when provider has channel mappings) -->
+            <div class="dropdown hidden" id="channelDropdownContainer">
+              <button
+                id="channelToggle"
+                class="provider-select btn dropbtn"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="Select a channel"
+              >
+                <span class="provider-select-left" id="channelLabel">Select a channel</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div id="channelDropdown" class="dropdown-content" role="menu" aria-label="Channel selection"></div>
+            </div>
+          </div>
+
+          <div class="form-group" style="max-width:540px;margin-top:0.75rem;">
+            <label for="igRefreshToken" style="font-weight:600;font-size:0.9rem;">IG token (used for channel loading + grouping)</label>
+            <input
+              type="password"
+              id="igRefreshToken"
+              autocomplete="off"
+              placeholder="Paste the IG token"
+              style="width:100%;box-sizing:border-box;padding:0.55rem 0.75rem;border:1px solid var(--color-border,#d1d5db);border-radius:0.5rem;font-size:0.9rem;margin-top:0.4rem;"
+            />
+            <span style="display:block;margin-top:0.3rem;font-size:0.8rem;color:var(--color-muted,#6b7280);">
+              Required for provider-specific channel extraction from Inspector Gadget.
+            </span>
+          </div>
+
+          <!-- Mode Toggle: File Upload vs S3 -->
+          <div class="mode-toggle-group">
+            <label for="modeSelect">Source:</label>
+            <select id="modeSelect" class="mode-select">
+              <option value="file">📄 Upload Files</option>
+              <option value="s3">☁️  S3 Bucket</option>
+            </select>
+          </div>
+
+          <!-- File Upload Form -->
+          <form id="unifiedForm" class="upload-form mode-file">
+            <div class="form-group">
+              <div class="file-input-wrapper">
+                <label for="originalFiles">
+                  📄 Original Metadata Files
+                  <span class="required-badge">Required</span>
+                </label>
+                <input
+                  type="file"
+                  id="originalFiles"
+                  name="original_files"
+                  multiple
+                  accept=".json,.xml"
+                />
+                <input
+                  type="file"
+                  id="originalFolderFiles"
+                  class="folder-input"
+                  name="original_folder_files"
+                  multiple
+                  webkitdirectory
+                  directory
+                  accept=".json,.xml"
+                  aria-label="Original metadata folder"
+                />
+                <span class="file-info"
+                  >Original metadata for quality checks. Select files or a folder.</span
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="file-input-wrapper">
+                <label for="convertedFiles">
+                  🔄 Converted Metadata Files
+                  <span class="optional-badge">Optional</span>
+                </label>
+                <input
+                  type="file"
+                  id="convertedFiles"
+                  name="converted_files"
+                  multiple
+                  accept=".json"
+                />
+                <input
+                  type="file"
+                  id="convertedFolderFiles"
+                  class="folder-input"
+                  name="converted_folder_files"
+                  multiple
+                  webkitdirectory
+                  directory
+                  accept=".json"
+                  aria-label="Converted metadata folder"
+                />
+                <span class="file-info"
+                  >Leave empty for original metadata quality checks only. Include to
+                  validate conversion process. Select files or a folder.</span
+                >
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Run All Checks
+            </button>
+
+            <button type="button" id="clear" class="btn btn-primary">
+              Clear 
+            </button>
+
+          </form>
+
+          <!-- S3 Checks Form -->
+          <form id="s3Form" class="upload-form mode-s3 hidden">
+            <input type="hidden" id="s3Bucket" name="s3_bucket" />
+            <input type="hidden" id="s3OriginalPrefix" name="s3_original_prefix" />
+            <input type="hidden" id="s3ConvertedPrefix" name="s3_converted_prefix" />
+
+            <div class="form-group date-range-group">
+              <label for="dateRangeStart">
+                Start Date
+                <span class="required-badge">Required</span>
+              </label>
+              <input
+                type="date"
+                id="dateRangeStart"
+                name="date_range_start"
+                required
+              />
+            </div>
+
+            <div class="form-group date-range-group">
+              <label for="dateRangeEnd">
+                End Date
+                <span class="required-badge">Required</span>
+              </label>
+              <input
+                type="date"
+                id="dateRangeEnd"
+                name="date_range_end"
+                required
+              />
+            </div>
+
+            <div class="s3-actions">
+              <button type="submit" class="btn btn-primary">
+                Run S3 Checks
+              </button>
+
+              <button type="button" id="clearS3" class="btn btn-primary">
+                Clear
+              </button>
+            </div>
+
+          </form>
+
+          <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Processing files...</p>
+          </div>
+
+          <div id="results" class="results hidden"></div>
+        </section>
+        </div>
+
+        <!-- Tab Pane 2: Visual Analytics Dashboard (Separate Web Tab) -->
+        <div id="analyticsTabPane" class="app-tab-pane hidden">
+          <section class="unified-section" id="analyticsDashboardSection">
+            <div id="analyticsDashboardContainer">
+              <div class="analytics-empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>No Quality Check Data Available Yet</h3>
+                <p>
+                  Run a Quality Check from the <strong>📄 Quality Checks</strong> tab to populate interactive visual charts (Pie, Donut, Bar charts) and error distribution analytics.
+                </p>
+                <button type="button" class="btn btn-primary" onclick="switchAppMainTab('checksTabPane')">
+                  Go to Quality Checks
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Tab Pane 3: Grouping Checker -->
+        <div id="groupingTabPane" class="app-tab-pane hidden">
+        <section class="unified-section" id="groupingCheckerSection">
+          <h2>Grouping Checker</h2>
+          <p>
+            Verify that episodes are correctly grouped in the Inspector Gadget cache.
+          </p>
+
+          <div style="margin-top:1rem;display:flex;gap:0.75rem;align-items:center;">
+            <button type="button" id="runGroupingCheck" class="btn btn-secondary">
+              Run Grouping Check
+            </button>
+            <button type="button" id="clearGroupingResults" class="btn" style="display:none;">
+              Clear
+            </button>
+          </div>
+
+          <div id="groupingLoading" class="loading hidden" style="margin-top:1rem;">
+            <div class="spinner"></div>
+            <p>Progress:</p>
+          </div>
+
+          <div id="groupingResults" style="margin-top:1.5rem;"></div>
+        </section>
+        </div>
+
+        <!-- Tab Pane 4: Ingestion Tests -->
+        <div id="ingestionTabPane" class="app-tab-pane hidden">
+        <section class="unified-section" id="ingestionTestsSection">
+          <h2>NRK Ingestion Test Suite</h2>
+          <p>
+            Run YAML-defined ingestion assertions against uploaded original and converted files.
+            This supports many files in one run.
+          </p>
+
+          <div class="form-group" style="max-width:700px;">
+            <label for="ingestionTestsConfigPath" style="font-weight:600;font-size:0.9rem;">Tests config path</label>
+            <input
+              type="text"
+              id="ingestionTestsConfigPath"
+              value="configs/providers/nrk-tv/nrk-tv.repeating_ingestion.tests.yaml"
+              style="width:100%;box-sizing:border-box;padding:0.55rem 0.75rem;border:1px solid var(--color-border,#d1d5db);border-radius:0.5rem;font-size:0.9rem;margin-top:0.4rem;"
+            />
+          </div>
+
+          <div class="form-group" style="max-width:700px;">
+            <label for="baselineConvertedFiles" style="font-weight:600;font-size:0.9rem;">
+              Baseline converted files (optional, for regression checks)
+            </label>
+            <input
+              type="file"
+              id="baselineConvertedFiles"
+              name="baseline_converted_files"
+              multiple
+              accept=".json"
+              style="margin-top:0.4rem;"
+            />
+          </div>
+
+          <div style="margin-top:1rem;display:flex;gap:0.75rem;align-items:center;">
+            <button type="button" id="runIngestionTests" class="btn btn-primary">
+              Run Ingestion Tests
+            </button>
+            <button type="button" id="clearIngestionTestResults" class="btn" style="display:none;">
+              Clear
+            </button>
+          </div>
+
+          <div id="ingestionLoading" class="loading hidden" style="margin-top:1rem;">
+            <div class="spinner"></div>
+            <p>Running ingestion tests...</p>
+          </div>
+
+          <div id="ingestionResults" style="margin-top:1.5rem;"></div>
+        </section>
+        </div>
+      </main>
+
+      <footer>
+        <p>Metadata Checker v0.1.0</p>
+      </footer>
+    </div>
+
+    <script>
+      window.PROVIDERS_LIST = null;
+      fetch('/static/providers_list.json')
+        .then(r => r.json())
+        .then(data => {
+          window.PROVIDERS_LIST = data;
+          console.log('✓ Providers loaded:', data);
+        })
+        .catch(err => console.error('Failed to load providers:', err));
+    </script>
+    <script src="{{ url_for('static', filename='app.js', v=static_version) }}"></script>
+  </body>
+</html>

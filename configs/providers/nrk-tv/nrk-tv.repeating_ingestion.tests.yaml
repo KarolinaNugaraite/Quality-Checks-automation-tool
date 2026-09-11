@@ -1,0 +1,275 @@
+test_suite:
+  suite_id: nrk_repeating_ingestion_v1
+  provider_id: nrk-tv-vod
+  metadata_type: vod
+  source_format: xml
+  source_type: deeplink
+  target_store_id: 7045
+  converted_content_id_template: "nrk-tv.content.{program_id}"
+  scope_filter:
+    asset_type: RepeatingProgram
+
+tests:
+  - test_case_id: nrk_ingestion_repeating_001
+    test_name: ingestion_presence_check
+    description: validate that repeating program appears in converted dataset
+    input:
+      original:
+        asset_type: RepeatingProgram
+        program_id: MSPO42020317
+        source_type: DEEPLINK
+    validation_rules:
+      dataset: converted_vod
+      match_logic:
+        join_type: exact
+        join_fields:
+          - original.program_id -> converted.original_content_id
+      assertions:
+        - assertion_id: converted_record_exists
+          assertion_type: field
+          field_path: converted.content_id
+          operator: equals
+          expected_value_template: "nrk-tv.content.{original.program_id}"
+        - assertion_id: original_content_id_preserved
+          assertion_type: field
+          field_path: converted.original_content_id
+          operator: equals
+          expected_value_from_input: original.program_id
+    expected_output:
+      presence: true
+      content_id: "nrk-tv.content.MSPO42020317"
+      original_content_id: "MSPO42020317"
+
+  - test_case_id: nrk_ingestion_repeating_002
+    test_name: field_mapping_check
+    description: validate mapping of title, description, production_year, duration, and category
+    input:
+      original:
+        asset_type: RepeatingProgram
+        program_id: MSPO42020317
+        title: "NRK Repeating Sports Show"
+        description: "Daily sports recap from NRK."
+        production_year: 2024
+        duration_iso8601: PT1H2M3S
+        category: sport
+    validation_rules:
+      dataset: converted_vod
+      assertions:
+        - assertion_id: title_mapped
+          assertion_type: field
+          field_path: converted.title
+          operator: equals
+          expected_value_from_input: original.title
+        - assertion_id: description_mapped
+          assertion_type: field
+          field_path: converted.description
+          operator: equals
+          expected_value_from_input: original.description
+        - assertion_id: production_year_mapped
+          assertion_type: field
+          field_path: converted.production_year
+          operator: equals
+          expected_value_from_input: original.production_year
+        - assertion_id: duration_converted_to_seconds
+          assertion_type: transform
+          transform: iso8601_duration_to_seconds
+          source_field_path: original.duration_iso8601
+          target_field_path: converted.duration_in_seconds
+          operator: equals_transformed_value
+        - assertion_id: genre_mapped_uppercase
+          assertion_type: field
+          field_path: converted.genres.main[0]
+          operator: equals
+          expected_value: SPORT
+    expected_output:
+      title: "NRK Repeating Sports Show"
+      description: "Daily sports recap from NRK."
+      production_year: 2024
+      duration_in_seconds: 3723
+      genres:
+        main:
+          - SPORT
+
+  - test_case_id: nrk_ingestion_repeating_003
+    test_name: deeplink_validation
+    description: validate deeplink presence and source type constraints
+    input:
+      original:
+        asset_type: RepeatingProgram
+        program_id: MSPO42020317
+        source_type: DEEPLINK
+    validation_rules:
+      dataset: converted_vod
+      assertions:
+        - assertion_id: open_deeplink_exists
+          assertion_type: field
+          field_path: converted.deeplinks.OPEN.url
+          operator: exists
+        - assertion_id: play_deeplink_exists
+          assertion_type: field
+          field_path: converted.deeplinks.PLAY.url
+          operator: exists
+        - assertion_id: play_deeplink_autostart
+          assertion_type: field
+          field_path: converted.deeplinks.PLAY.url
+          operator: contains
+          expected_value: "autostart=true"
+        - assertion_id: source_type_deeplink
+          assertion_type: field
+          field_path: converted.source_type
+          operator: equals
+          expected_value: DEEPLINK
+    expected_output:
+      source_type: DEEPLINK
+      deeplinks:
+        OPEN:
+          exists: true
+        PLAY:
+          exists: true
+          contains:
+            - autostart=true
+
+  - test_case_id: nrk_ingestion_repeating_004
+    test_name: image_mapping_validation
+    description: validate image mapping including dimensions and ratio
+    input:
+      original:
+        asset_type: RepeatingProgram
+        program_id: MSPO42020317
+        image:
+          url: "https://cdn.nrk.no/images/MSPO42020317.jpg"
+          width: 1920
+          height: 1080
+    validation_rules:
+      dataset: converted_vod
+      assertions:
+        - assertion_id: image_url_preserved
+          assertion_type: field
+          field_path: converted.images[0].url
+          operator: equals
+          expected_value_from_input: original.image.url
+        - assertion_id: image_width_mapped
+          assertion_type: field
+          field_path: converted.images[0].width
+          operator: equals
+          expected_value_from_input: original.image.width
+        - assertion_id: image_height_mapped
+          assertion_type: field
+          field_path: converted.images[0].height
+          operator: equals
+          expected_value_from_input: original.image.height
+        - assertion_id: image_ratio_derived
+          assertion_type: transform
+          transform: width_height_to_aspect_ratio
+          source_field_paths:
+            - original.image.width
+            - original.image.height
+          target_field_path: converted.images[0].ratio
+          operator: equals_transformed_value
+    expected_output:
+      images:
+        - url: "https://cdn.nrk.no/images/MSPO42020317.jpg"
+          width: 1920
+          height: 1080
+          ratio: "16:9"
+
+  - test_case_id: nrk_ingestion_repeating_005
+    test_name: publishing_info_validation
+    description: validate publishing window and rights targets
+    input:
+      original:
+        asset_type: RepeatingProgram
+        program_id: MSPO42020317
+        rights:
+          valid_from: "2026-05-01T00:00:00Z"
+          valid_to: "2026-06-01T00:00:00Z"
+          store_target: 7045
+    validation_rules:
+      dataset: converted_vod
+      assertions:
+        - assertion_id: valid_from_mapped
+          assertion_type: field
+          field_path: converted.publishing_info[0].targets[0].rights.validFrom
+          operator: equals
+          expected_value_from_input: original.rights.valid_from
+        - assertion_id: valid_to_mapped
+          assertion_type: field
+          field_path: converted.publishing_info[0].targets[0].rights.validTo
+          operator: equals
+          expected_value_from_input: original.rights.valid_to
+        - assertion_id: target_store_exists
+          assertion_type: collection
+          field_path: converted.publishing_info[0].targets[*].stores[*].id
+          operator: contains
+          expected_value: 7045
+        - assertion_id: rights_structure_exists
+          assertion_type: field
+          field_path: converted.publishing_info[0].targets[0].rights
+          operator: object_has_keys
+          expected_value:
+            - validFrom
+            - validTo
+    expected_output:
+      publishing_info:
+        valid_from: "2026-05-01T00:00:00Z"
+        valid_to: "2026-06-01T00:00:00Z"
+        store_targets:
+          - 7045
+
+  - test_case_id: nrk_ingestion_repeating_006
+    test_name: duplication_check
+    description: ensure content_id uniqueness for NRK deeplink repeating programs
+    input:
+      original:
+        provider_id: nrk-tv-vod
+        source_type: DEEPLINK
+    validation_rules:
+      dataset: converted_vod
+      dataset_filter:
+        provider_id: nrk-tv-vod
+        source_type: DEEPLINK
+      assertions:
+        - assertion_id: no_duplicate_content_id
+          assertion_type: aggregate
+          field_path: converted.content_id
+          operator: unique
+        - assertion_id: no_conflict_with_existing_nrk_deeplink_entries
+          assertion_type: aggregate
+          operator: no_conflicting_key_set
+          key_fields:
+            - converted.content_id
+            - converted.original_content_id
+    expected_output:
+      duplicates_found: 0
+      conflicts_found: 0
+
+  - test_case_id: nrk_ingestion_repeating_007
+    test_name: regression_safety_check
+    description: ensure non-repeating NRK content remains unaffected
+    input:
+      original:
+        provider_id: nrk-tv-vod
+        excluded_asset_type: RepeatingProgram
+    validation_rules:
+      dataset: converted_vod
+      dataset_filter:
+        provider_id: nrk-tv-vod
+        asset_type_not_equals: RepeatingProgram
+      assertions:
+        - assertion_id: non_repeating_records_unchanged
+          assertion_type: regression
+          operator: unchanged_fields
+          field_paths:
+            - content_id
+            - original_content_id
+            - source_type
+            - deeplinks
+            - publishing_info
+        - assertion_id: no_unexpected_updates
+          assertion_type: aggregate
+          operator: equals
+          field_path: regression.changed_record_count
+          expected_value: 0
+    expected_output:
+      changed_record_count: 0
+      status: pass

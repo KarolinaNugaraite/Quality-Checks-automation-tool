@@ -1,0 +1,158 @@
+# Simply TV Finland EPG rules
+# Source shape: channels[] + programs[] + listings[]
+
+sample_size: 25
+random_seed: 42
+
+required_languages:
+  - fi
+min_description_words: 3
+placeholder_descriptions:
+  - n/a
+  - na
+  - tbd
+  - todo
+  - description
+required_image_ratios:
+  - "16:9"
+
+required_envelope_fields:
+  epg: []
+
+# These fields are required on each normalized listing/broadcast.
+required_broadcast_fields:
+  - contentId
+  - broadcastId
+  - channel_id
+  - displayTime.start
+  - displayTime.end
+
+# Simply TV listings do not contain the publishingInfo/targets contract used by
+# VOD metadata, and live broadcasts do not use rerun/premiere flags.
+disabled_original_checks:
+  - orig_envelope_required_field_missing
+  - orig_content_id_missing
+  - orig_publishing_rights_missing
+  - orig_publishing_no_valid_targets
+  - orig_broadcast_rerun_live_premiere_conflict
+  - orig_age_rating_out_of_range
+  - orig_episode_count_outlier
+
+disabled_converted_checks:
+  - conv_envelope_required_field_missing
+
+id_keys:
+  - contentId
+
+disable_id_fallback: true
+
+type_keys:
+  - type
+
+provider_group_keys:
+  - channelId
+
+candidate_keys:
+  title:
+    - title
+  description:
+    - descriptions
+  descriptions_block:
+    - descriptions
+  images:
+    - images
+  image_type:
+    - kind
+  image_ratio:
+    - aspect_ratio
+  genre:
+    - genres
+  production_year:
+    - productionYear
+  duration:
+    - attributes.duration
+  age_rating:
+    - ageRating
+  episode_id:
+    - episodeNumber
+  series_id:
+    - seriesId
+  season_id:
+    - seasonNumber
+  broadcasts:
+    - broadcasts
+  broadcast_id:
+    - broadcastId
+  broadcast_content_id:
+    - contentId
+  display_start:
+    - displayTime.start
+  display_end:
+    - displayTime.end
+  channel_id:
+    - channelId
+  live:
+    - live
+  country_code:
+    - countryCode
+  language_code:
+    - languageCode
+  rights:
+    - broadcastRights
+  publishing_info: []
+  targets: []
+
+source_field_mapping:
+  contentId: MAPPED_FROM_PROGRAM_ID
+  broadcastId: MAPPED_FROM_LISTING_ID
+  channelId: MAPPED_FROM_CHANNEL_ID
+  title: MAPPED_FROM_PROGRAM_TITLES
+  descriptions: MAPPED_FROM_PROGRAM_DESCRIPTIONS
+  genres: MAPPED_FROM_PROGRAM_GENRES
+  images: MAPPED_FROM_PROGRAM_IMAGES
+  ageRating: MAPPED_FROM_LISTING_QUALIFIERS
+  episodeNumber: MAPPED_FROM_PROGRAM_ATTRIBUTES
+  series: MAPPED_FROM_PROGRAM_SERIES_ID
+  season: MAPPED_FROM_PROGRAM_ATTRIBUTES
+  displayStartTime: MAPPED_FROM_LISTING_SCHEDULE
+  displayEndTime: MAPPED_FROM_LISTING_SCHEDULE
+  countryCode: MAPPED_FROM_CHANNEL
+  languageCode: MAPPED_FROM_CHANNEL
+  live: MAPPED_FROM_LISTING_QUALIFIERS
+  targets: MISSING_FROM_SOURCE
+
+analytics_matrix_fields:
+  - label: Content ID
+    error_codes: [MISSING_CONTENT_ID, INVALID_BROADCAST_CONTENT_REFERENCE]
+  - label: Titles
+    error_codes: [MISSING_TITLE, INVALID_LANGUAGE_CODE]
+  - label: Descriptions
+    error_codes: [MISSING_DESCRIPTION, DESCRIPTION_TOO_SHORT]
+  - label: Genres
+    error_codes: [MISSING_GENRE, UNMAPPED_GENRE]
+  - label: Images
+    error_codes: [MISSING_16X9_IMAGE, UNMAPPED_IMAGE_TYPE, INVALID_IMAGE_URL, INVALID_IMAGE_DIMENSIONS]
+  - label: Age Ratings
+    error_codes: [MISSING_AGE_RATING]
+  - label: Episode Number
+    error_codes: [SCHEMA_ERROR]
+  - label: Series
+    error_codes: [SCHEMA_ERROR]
+  - label: Season
+    error_codes: [SCHEMA_ERROR]
+  - label: Display Start Time
+    error_codes: [INVALID_EPG_FROM_TO_DATES]
+  - label: Display End Time
+    error_codes: [INVALID_EPG_FROM_TO_DATES]
+  - label: Channel External Name
+    error_codes: [MISSING_CHANNEL_ID, SCHEMA_ERROR]
+  - label: Live
+    error_codes: [BROADCAST_RERUN_LIVE_PREMIERE_CONFLICT]
+  - label: Broadcast ID
+    error_codes: [MISSING_BROADCAST_ID, DUPLICATE_BROADCAST_ID]
+  - label: Broadcast Timing
+    error_codes: [EPG_GAP_BETWEEN_BROADCASTS, EPG_OVERLAPPING_START, EPG_OVERLAPPING_END, SCHEDULE_DURATION_EXCEEDS_24_HOURS]
+  - label: Country Code
+    error_codes: [INVALID_COUNTRY_CODE]
+  - label: Language Code
+    error_codes: [INVALID_LANGUAGE_CODE]

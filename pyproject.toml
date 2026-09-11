@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metadata-checker"
+version = "0.1.0"
+description = "Original and Converted metadata QA checks"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "boto3>=1.34.0",
+  "PyYAML>=6.0.0",
+  "Flask>=3.0.0",
+  "openpyxl>=3.1.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+metadata-checker = "metadata_checker.cli:main"
+metadata-checker-web = "metadata_checker.web:create_app"

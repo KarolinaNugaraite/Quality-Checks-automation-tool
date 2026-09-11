@@ -1,0 +1,394 @@
+[
+  {
+    "providerId": "amazon-prime-event",
+    "providerName": "amazon-prime-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "bbc-nordicplus",
+    "providerName": "BBC Nordic Plus",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "wbd-turner",
+    "providerName": "Cartoonito",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "discovery-sbs",
+    "providerName": "discovery-sbs",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "disney-plus-vod",
+    "providerName": "Disney Plus",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "SE"
+    ]
+  },
+  {
+    "providerId": "disney-plus-event",
+    "providerName": "disney-plus-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "SE"
+    ]
+  },
+  {
+    "providerId": "disney-svod",
+    "providerName": "disney-svod",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "viaplay-svod",
+    "providerName": "Filmfavoriter",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "schibsted-godare",
+    "providerName": "Godare",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "gracenote-epg",
+    "providerName": "gracenote-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "aenetworks-historyplay",
+    "providerName": "History Play",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "june-epg",
+    "providerName": "june-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "discovery-kanal5",
+    "providerName": "Kanal 5 fulla s\u00e4songer",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "love-nature-vod",
+    "providerName": "love-nature-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "min-kino-vod",
+    "providerName": "min-kino-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "mock-epg",
+    "providerName": "mock-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "tv4-vod",
+    "providerName": "MTV Hayu DL",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "FI",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "tv4-media-vod",
+    "providerName": "TV4 Media",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "FI",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "tv4-media-epg",
+    "providerName": "TV4 Media EPG",
+    "types": [
+      "epg"
+    ],
+    "countries": [
+      "SE"
+    ]
+  },
+  {
+    "providerId": "natgeo-now",
+    "providerName": "National Geographic Now",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "norske-filmer-vod",
+    "providerName": "norske-filmer-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "amazon-prime-vod",
+    "providerName": "Prime Video",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "qello-vod",
+    "providerName": "qello-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "sd-liiga",
+    "providerName": "sd-liiga",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "simply-tv",
+    "providerName": "simply-tv",
+    "types": [
+      "epg"
+    ],
+    "countries": [
+      "FI"
+    ]
+  },
+  {
+    "providerId": "nbcu-skyshowtime",
+    "providerName": "SkyShowtime",
+    "types": [
+      "vod"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "svt-epg",
+    "providerName": "svt-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "svt-event",
+    "providerName": "svt-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "SE"
+    ]
+  },
+  {
+    "providerId": "tv4-event",
+    "providerName": "tv4-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "FI",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "viaplay-deeplink-vod",
+    "providerName": "Viaplay",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "viaplay-deeplink-event",
+    "providerName": "viaplay-deeplink-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "viaplay-epg",
+    "providerName": "viaplay-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": []
+  },
+  {
+    "providerId": "wbd-max-event",
+    "providerName": "wbd-max-event",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "FI",
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "wbd-max-vod",
+    "providerName": "wbd-max-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "FI",
+      "NO",
+      "SE"
+    ]
+  },
+  {
+    "providerId": "nrk-tv-vod",
+    "providerName": "NRK TV",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO"
+    ]
+  },
+  {
+    "providerId": "norway-tp-vod",
+    "providerName": "norway-tp-vod",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO"
+    ]
+  },
+  {
+    "providerId": "norway-tp-epg",
+    "providerName": "norway-tp-epg",
+    "types": [
+      "epg"
+    ],
+    "countries": [
+      "NO"
+    ]
+  },
+  {
+    "providerId": "tv2-0-vod",
+    "providerName": "TV 2 Play",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO"
+    ]
+  },
+  {
+    "providerId": "disney-plus-norway-deeplink",
+    "providerName": "Disney Plus Norway Deeplink",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "NO"
+    ]
+  },
+  {
+    "providerId": "svt-play-vod",
+    "providerName": "SVT Play",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "SE"
+    ]
+  },
+  {
+    "providerId": "mtv-katsomo-deeplink",
+    "providerName": "MTV Katsomo",
+    "types": [
+      "vod"
+    ],
+    "countries": [
+      "FI"
+    ]
+  },
+  {
+    "providerId": "tv4-events",
+    "providerName": "tv4-events",
+    "types": [
+      "event"
+    ],
+    "countries": [
+      "FI",
+      "SE"
+    ]
+  }
+]

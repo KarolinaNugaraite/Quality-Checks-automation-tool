@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+
+# Reports
+reports/*.json
+reports/**/*.json
+
+# Local scratch/output artifacts
+--output
+.env
+.env.*
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/*.tfvars
+
+# MacOS
+.DS_Store

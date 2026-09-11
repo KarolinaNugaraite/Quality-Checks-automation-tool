@@ -1,0 +1,101 @@
+{
+  "viaplay": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-svod": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-epg": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "epg/original/",
+    "converted_prefix": "epg/converted/",
+    "aws_profile": "inspector-gadget-sandbox",
+    "by_channel": {
+      "se-viaplay-channel-viasatpremiere": {
+        "label": "se.viaplay.channel.viasatpremiere",
+        "original_prefix": "epg/original/se-viaplay-channel-viasatpremiere/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-viasatpremiere/"
+      },
+      "se-viaplay-channel-tv8": {
+        "label": "se.viaplay.channel.tv8",
+        "original_prefix": "epg/original/se-viaplay-channel-tv8/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-tv8/"
+      },
+      "se-viaplay-channel-tv10": {
+        "label": "se.viaplay.channel.tv10",
+        "original_prefix": "epg/original/se-viaplay-channel-tv10/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-tv10/"
+      },
+      "se-viaplay-channel-tv6": {
+        "label": "se.viaplay.channel.tv6",
+        "original_prefix": "epg/original/se-viaplay-channel-tv6/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-tv6/"
+      },
+      "se-viaplay-channel-tv3": {
+        "label": "se.viaplay.channel.tv3",
+        "original_prefix": "epg/original/se-viaplay-channel-tv3/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-tv3/"
+      },
+      "se-viaplay-channel-viasatfilmhits": {
+        "label": "se.viaplay.channel.viasatfilmhits",
+        "original_prefix": "epg/original/se-viaplay-channel-viasatfilmhits/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-viasatfilmhits/"
+      },
+      "se-viaplay-channel-viasatfilmaction": {
+        "label": "se.viaplay.channel.viasatfilmaction",
+        "original_prefix": "epg/original/se-viaplay-channel-viasatfilmaction/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-viasatfilmaction/"
+      },
+      "se-viaplay-channel-viasatfilmfamily": {
+        "label": "se.viaplay.channel.viasatfilmfamily",
+        "original_prefix": "epg/original/se-viaplay-channel-viasatfilmfamily/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-viasatfilmfamily/"
+      },
+      "se-viaplay-channel-viasatseries": {
+        "label": "se.viaplay.channel.viasatseries",
+        "original_prefix": "epg/original/se-viaplay-channel-viasatseries/",
+        "converted_prefix": "epg/converted/se-viaplay-channel-viasatseries/"
+      },
+      "se.viaplay.crime": {
+        "label": "se.viaplay.crime",
+        "original_prefix": "epg/original/se.viaplay.crime/",
+        "converted_prefix": "epg/converted/se.viaplay.crime/"
+      },
+      "se.viaplay.classics": {
+        "label": "se.viaplay.classics",
+        "original_prefix": "epg/original/se.viaplay.classics/",
+        "converted_prefix": "epg/converted/se.viaplay.classics/"
+      }
+    }
+  },
+  "viaplay-deeplink-vod": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-deeplink-event": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-event/original/fi/",
+    "converted_prefix": "deeplink-event/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "simply-tv": {
+    "by_channel": {
+      "yle-tv1-finland": {
+        "label": "YLE TV1 Finland"
+      }
+    }
+  },
+  "tv4-media-vod": {
+    "bucket": "adapter-metadata-sbx",
+    "original_prefix": "tv4-media/vod/original/",
+    "converted_prefix": "tv4-media/vod/converted/"
+  }
+}

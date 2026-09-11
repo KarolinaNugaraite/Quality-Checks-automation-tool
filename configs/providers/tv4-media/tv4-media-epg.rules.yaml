@@ -1,0 +1,193 @@
+# TV4 EPG source mapping
+# Source shape: data[].channel + data[].broadcasts[], optionally wrapped in
+# OpenSearch's _source object. related.programs may be empty or excluded.
+
+sample_size: 25
+random_seed: 42
+
+required_languages: []
+min_description_words: 3
+required_image_ratios: []
+
+placeholder_descriptions:
+  - n/a
+  - na
+  - tbd
+  - todo
+  - description
+
+# Only the broadcast fields TV4 sends directly are structural requirements.
+required_envelope_fields:
+  epg: []
+required_broadcast_fields:
+  - contentId
+  - broadcastId
+  - channel_id
+  - displayTime.start
+  - displayTime.end
+  - product_code
+
+disabled_original_checks:
+  # TV4 has no envelope-level schedules/from/to/date contract. Its schedule
+  # window is defined per broadcast via public.start/end or planned.start/end.
+  - orig_envelope_required_field_missing
+  # TV4 EPG source broadcasts do not carry series IDs, so this aggregate
+  # collapses into unknown_series and creates a false outlier.
+  - orig_episode_count_outlier
+
+disabled_converted_checks:
+  - conv_envelope_required_field_missing
+
+id_keys:
+  - contentId
+
+disable_id_fallback: true
+
+type_keys:
+  - type
+
+schedule_only_records: true
+skip_epg_date_contract: true
+
+candidate_keys:
+  # Broadcast title is a plain string, not a localized title array.
+  title:
+    - title
+    - relatedProgram.title
+    - relatedProgram.name
+    - relatedProgram.titles
+
+  # These values are absent from broadcasts and are only available when
+  # related.programs includes the matching program_external_reference.
+  description:
+    - relatedProgram.description
+    - relatedProgram.long_description
+    - relatedProgram.synopsis
+  descriptions_block:
+    - relatedProgram.descriptions
+    - relatedProgram
+  images:
+    - relatedProgram.images
+    - relatedProgram.assets
+  genre:
+    - relatedProgram.genres
+    - relatedProgram.genre
+  age_rating:
+    - relatedProgram.ageRatings
+    - relatedProgram.age_rating
+    - relatedProgram.rating
+  episode_id:
+    - relatedProgram.episodeNumber
+    - relatedProgram.episode_number
+  series_id:
+    - relatedProgram.series.id
+    - relatedProgram.seriesId
+    - relatedProgram.series_id
+  season_id:
+    - relatedProgram.season.id
+    - relatedProgram.seasonId
+    - relatedProgram.season_id
+  product_code:
+    - product_code
+
+  # Broadcast-native mappings.
+  broadcasts:
+    - broadcasts
+  broadcast_id:
+    - tx_external_reference
+    - txb_external_reference
+    - broadcast_external_reference
+    - broadcastId
+    - id
+  broadcast_content_id:
+    - contentId
+  display_start:
+    - displayTime.start
+  display_end:
+    - displayTime.end
+  channel_id:
+    - channelId
+    - channel.id
+    - channel.name
+    - channel.display_name
+  live:
+    - live
+  language_code:
+    - channel.language
+    - language
+    - lang
+  country_code:
+    - channel.country
+    - country
+    - metadataOriginCountry
+  rights:
+    - broadcastRights.hide
+    - broadcastRights
+  publishing_info:
+    - broadcastRights
+  targets: []
+
+# Source coverage reference for the TV4 EPG adapter.
+source_field_mapping:
+  contentId: PROXY_PARTIAL
+  titleId: MISSING_FROM_SOURCE
+  titles: PROXY_PARTIAL
+  descriptions: MISSING_FROM_SOURCE
+  genres: MISSING_FROM_SOURCE
+  images: MISSING_FROM_SOURCE
+  ageRatings: MISSING_FROM_SOURCE
+  episodeNumber: MISSING_FROM_SOURCE
+  series: MISSING_FROM_SOURCE
+  season: MISSING_FROM_SOURCE
+  displayStartTime: MAPPED
+  displayEndTime: MAPPED
+  channelExternalName: MAPPED
+  live: DERIVED
+  broadcastRights: PROXY_PARTIAL
+  targets: MISSING_FROM_SOURCE
+
+# Analytics matrix columns. These represent every source/adapter field above,
+# even when the matching check currently has zero findings.
+analytics_matrix_fields:
+  - label: Content ID
+    error_codes: [MISSING_CONTENT_ID, INVALID_BROADCAST_CONTENT_REFERENCE]
+  - label: Product Code
+    error_codes: [MISSING_MANDATORY_ATTRIBUTES]
+  - label: Title ID
+    error_codes: [MISSING_TITLE]
+  - label: Titles
+    error_codes: [MISSING_TITLE, INVALID_LANGUAGE_CODE]
+  - label: Descriptions
+    error_codes: [MISSING_DESCRIPTION, DESCRIPTION_TOO_SHORT]
+  - label: Genres
+    error_codes: [MISSING_GENRE, UNMAPPED_GENRE]
+  - label: Images
+    error_codes: [MISSING_16X9_IMAGE, UNMAPPED_IMAGE_TYPE, INVALID_IMAGE_URL, INVALID_IMAGE_DIMENSIONS]
+  - label: Age Ratings
+    error_codes: [MISSING_AGE_RATING]
+  - label: Episode Number
+    error_codes: [SCHEMA_ERROR]
+  - label: Series
+    error_codes: [SCHEMA_ERROR]
+  - label: Season
+    error_codes: [SCHEMA_ERROR]
+  - label: Display Start Time
+    error_codes: [INVALID_EPG_FROM_TO_DATES]
+  - label: Display End Time
+    error_codes: [INVALID_EPG_FROM_TO_DATES]
+  - label: Channel External Name
+    error_codes: [MISSING_CHANNEL_ID, SCHEMA_ERROR]
+  - label: Live
+    error_codes: [BROADCAST_RERUN_LIVE_PREMIERE_CONFLICT]
+  - label: Broadcast Rights
+    error_codes: [MISSING_PUBLISHING_OR_BROADCAST_RIGHTS]
+  - label: Targets
+    error_codes: [PUBLISHING_INFO_NO_VALID_TARGETS]
+  - label: Broadcast ID
+    error_codes: [MISSING_BROADCAST_ID, DUPLICATE_BROADCAST_ID]
+  - label: Broadcast Timing
+    error_codes: [EPG_GAP_BETWEEN_BROADCASTS, EPG_OVERLAPPING_START, EPG_OVERLAPPING_END, SCHEDULE_DURATION_EXCEEDS_24_HOURS]
+  - label: Country Code
+    error_codes: [INVALID_COUNTRY_CODE]
+  - label: Language Code
+    error_codes: [INVALID_LANGUAGE_CODE]

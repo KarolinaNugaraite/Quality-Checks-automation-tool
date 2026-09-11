@@ -1,0 +1,32 @@
+{
+  "viaplay": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-svod": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-epg": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-deeplink-vod": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  },
+  "viaplay-deeplink-event": {
+    "bucket": "sbx-new-content-integrations-test",
+    "original_prefix": "deeplink-vod/original/fi/",
+    "converted_prefix": "deeplink-vod/converted/fi/",
+    "aws_profile": "inspector-gadget-sandbox"
+  }
+}

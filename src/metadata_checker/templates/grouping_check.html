@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Viaplay FI Grouping Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <style>
+      /* ── Page-specific styles ─────────────────────────────────────────── */
+      .gc-nav {
+        margin-bottom: 1.5rem;
+      }
+      .gc-nav a {
+        color: var(--color-primary, #3b82f6);
+        text-decoration: none;
+        font-size: 0.875rem;
+      }
+      .gc-nav a:hover { text-decoration: underline; }
+
+      .gc-form-card {
+        background: var(--color-surface, #ffffff);
+        border: 1px solid var(--color-border, #e5e7eb);
+        border-radius: 0.75rem;
+        padding: 2rem;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .gc-form-card h2 { margin-top: 0; }
+
+      .gc-field { margin-bottom: 1.25rem; }
+      .gc-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+      }
+      .gc-field input[type="password"],
+      .gc-field input[type="file"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.55rem 0.75rem;
+        border: 1px solid var(--color-border, #d1d5db);
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        background: var(--color-bg, #f9fafb);
+      }
+      .gc-field small {
+        display: block;
+        margin-top: 0.3rem;
+        color: var(--color-muted, #6b7280);
+        font-size: 0.8rem;
+      }
+
+      .gc-error {
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+      }
+
+      /* ── Stat cards ───────────────────────────────────────────────────── */
+      .gc-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .gc-stat-card {
+        border-radius: 0.75rem;
+        padding: 1.25rem 1rem;
+        text-align: center;
+        border: 1px solid var(--color-border, #e5e7eb);
+      }
+      .gc-stat-card .gc-stat-icon  { font-size: 1.8rem; line-height: 1; }
+      .gc-stat-card .gc-stat-count { font-size: 2rem; font-weight: 700; margin: 0.25rem 0 0; }
+      .gc-stat-card .gc-stat-label { font-size: 0.8rem; color: var(--color-muted, #6b7280); }
+      .gc-stat-card .gc-stat-pct   { font-size: 0.75rem; color: var(--color-muted, #6b7280); }
+      .gc-stat-grouped   { background: #f0fdf4; border-color: #86efac; }
+      .gc-stat-ungrouped { background: #fef2f2; border-color: #fca5a5; }
+      .gc-stat-notfound  { background: #fffbeb; border-color: #fcd34d; }
+      .gc-stat-errors    { background: #fff7ed; border-color: #fdba74; }
+
+      /* ── Result sections ──────────────────────────────────────────────── */
+      .gc-section { margin-bottom: 2.5rem; }
+      .gc-section h3 {
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .gc-series-block {
+        margin-bottom: 1.25rem;
+        border: 1px solid var(--color-border, #e5e7eb);
+        border-radius: 0.6rem;
+        overflow: hidden;
+      }
+      .gc-series-header {
+        background: var(--color-surface-alt, #f3f4f6);
+        padding: 0.6rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .gc-series-count {
+        margin-left: auto;
+        background: #fca5a5;
+        color: #7f1d1d;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        padding: 0.1rem 0.55rem;
+      }
+
+      .gc-ep-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+      .gc-ep-table th {
+        background: var(--color-surface-alt, #f9fafb);
+        text-align: left;
+        padding: 0.45rem 0.75rem;
+        font-weight: 600;
+        border-bottom: 1px solid var(--color-border, #e5e7eb);
+      }
+      .gc-ep-table td {
+        padding: 0.4rem 0.75rem;
+        border-bottom: 1px solid var(--color-border-light, #f3f4f6);
+        vertical-align: top;
+      }
+      .gc-ep-table tr:last-child td { border-bottom: none; }
+      .gc-ep-table .mono { font-family: monospace; font-size: 0.78rem; }
+
+      /* ── Actions ──────────────────────────────────────────────────────── */
+      .gc-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        align-items: center;
+      }
+      .gc-meta {
+        margin-left: auto;
+        font-size: 0.8rem;
+        color: var(--color-muted, #6b7280);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Viaplay FI Grouping Checker</h1>
+        <p>Verify that Viaplay FI episodes are correctly grouped in the Inspector Gadget cache.</p>
+      </header>
+
+      <main>
+        <div class="gc-nav">
+          <a href="/">&larr; Back to Metadata Checker</a>
+        </div>
+
+        {%- if report is none %}
+        {# ── Upload form ─────────────────────────────────────────────── #}
+        <div class="gc-form-card">
+          <h2>Check episode grouping</h2>
+
+          {%- if error %}
+          <div class="gc-error">{{ error }}</div>
+          {%- endif %}
+
+          <form method="POST" enctype="multipart/form-data">
+            <div class="gc-field">
+              <label for="gc_provider">Provider</label>
+              <select id="gc_provider" name="provider_id" style="width: 100%; padding: 0.55rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.9rem;">
+                <option value="viaplay-deeplink-vod">Viaplay Deeplink VOD (Episodes)</option>
+                <option value="viaplay-deeplink-event" disabled>Viaplay Deeplink Event (Not supported)</option>
+              </select>
+              <small>Grouping is only available for episode-based providers (VOD).</small>
+            </div>
+
+            <div class="gc-field">
+              <label for="gc_files">📄 Original metadata files</label>
+              <input
+                type="file"
+                id="gc_files"
+                name="files"
+                multiple
+                accept=".json"
+                required
+              />
+              <small>Upload one or more original metadata JSON files (TVEpisode records).</small>
+            </div>
+
+            <div class="gc-field">
+              <label for="gc_token">🔑 Inspector Gadget refresh token</label>
+              <input
+                type="password"
+                id="gc_token"
+                name="refresh_token"
+                autocomplete="off"
+                placeholder="Paste your refresh token from Inspector Gadget"
+                required
+              />
+              <small>
+                Get a fresh token from
+                <a href="https://inspector-gadget-api.pilot.tvm.telia.com" target="_blank" rel="noopener noreferrer">Inspector Gadget</a>.
+                The token is used only for this request and is never stored.
+              </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Run grouping check</button>
+          </form>
+        </div>
+
+        {%- else %}
+        {# ── Results ─────────────────────────────────────────────────── #}
+
+        <div class="gc-actions">
+          <a href="{{ url_for('grouping_check_form') }}" class="btn">← Run another check</a>
+          <a href="{{ url_for('grouping_check_download') }}" class="btn btn-secondary">⬇ Download report JSON</a>
+          <span class="gc-meta">Checked at {{ report.checked_at }} &nbsp;|&nbsp; {{ report.total }} episodes</span>
+        </div>
+
+        {# ── Stat cards ───────────────────────────────────────────────── #}
+        <div class="gc-stats">
+          <div class="gc-stat-card gc-stat-grouped">
+            <div class="gc-stat-icon">✅</div>
+            <div class="gc-stat-count">{{ report.grouped }}</div>
+            <div class="gc-stat-label">Grouped</div>
+            <div class="gc-stat-pct">{{ report.grouped_pct }} of total</div>
+          </div>
+          <div class="gc-stat-card gc-stat-ungrouped">
+            <div class="gc-stat-icon">❌</div>
+            <div class="gc-stat-count">{{ report.ungrouped }}</div>
+            <div class="gc-stat-label">Ungrouped</div>
+            <div class="gc-stat-pct">{{ report.ungrouped_pct }} of total</div>
+          </div>
+          <div class="gc-stat-card gc-stat-notfound">
+            <div class="gc-stat-icon">❓</div>
+            <div class="gc-stat-count">{{ report.not_found }}</div>
+            <div class="gc-stat-label">Not found</div>
+            <div class="gc-stat-pct">{{ report.not_found_pct }} of total</div>
+          </div>
+          <div class="gc-stat-card gc-stat-errors">
+            <div class="gc-stat-icon">⚠️</div>
+            <div class="gc-stat-count">{{ report.errors }}</div>
+            <div class="gc-stat-label">Errors</div>
+            <div class="gc-stat-pct">{{ report.errors_pct }} of total</div>
+          </div>
+        </div>
+
+        {# ── Ungrouped episodes by series ─────────────────────────────── #}
+        {%- if report.ungrouped_by_series %}
+        <div class="gc-section">
+          <h3>❌ Ungrouped episodes by series</h3>
+          {%- for series_name, rows in report.ungrouped_by_series | dictsort %}
+          <div class="gc-series-block">
+            <div class="gc-series-header">
+              {{ series_name }}
+              <span class="gc-series-count">{{ rows | length }} episode{{ 's' if rows | length != 1 }}</span>
+            </div>
+            <table class="gc-ep-table">
+              <thead>
+                <tr>
+                  <th>Season</th>
+                  <th>Episode</th>
+                  <th>GUID</th>
+                  <th>Series ID</th>
+                  <th>Media ID</th>
+                  <th>Source file</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for row in rows %}
+                <tr>
+                  <td>{{ row.season_number if row.season_number is not none else '—' }}</td>
+                  <td>{{ row.episode_number if row.episode_number is not none else '—' }}</td>
+                  <td class="mono">{{ row.guid }}</td>
+                  <td class="mono">{{ row.series_id or '—' }}</td>
+                  <td class="mono">{{ row.media_id or '—' }}</td>
+                  <td class="mono">{{ row.source_file }}</td>
+                </tr>
+                {%- endfor %}
+              </tbody>
+            </table>
+          </div>
+          {%- endfor %}
+        </div>
+        {%- endif %}
+
+        {# ── Full results table ────────────────────────────────────────── #}
+        <div class="gc-section">
+          <details>
+            <summary style="cursor:pointer; font-weight:600; font-size:1.05rem; margin-bottom:0.75rem;">
+              📋 All episodes ({{ report.total }})
+            </summary>
+            <table class="gc-ep-table" style="margin-top:0.75rem;">
+              <thead>
+                <tr>
+                  <th>Series</th>
+                  <th>S</th>
+                  <th>E</th>
+                  <th>GUID</th>
+                  <th>Series ID</th>
+                  <th>Media ID</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for row in report.all_results %}
+                <tr>
+                  <td>{{ row.series_name or '—' }}</td>
+                  <td>{{ row.season_number if row.season_number is not none else '—' }}</td>
+                  <td>{{ row.episode_number if row.episode_number is not none else '—' }}</td>
+                  <td class="mono">{{ row.guid }}</td>
+                  <td class="mono">{{ row.series_id or '—' }}</td>
+                  <td class="mono">{{ row.media_id or '—' }}</td>
+                  <td>
+                    {%- if row.status == 'grouped' %}✅ grouped
+                    {%- elif row.status == 'ungrouped' %}❌ ungrouped
+                    {%- elif row.status == 'not_found' %}❓ not found
+                    {%- else %}⚠️ error
+                    {%- endif %}
+                  </td>
+                </tr>
+                {%- endfor %}
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+        {%- endif %}
+      </main>
+    </div>
+  </body>
+</html>

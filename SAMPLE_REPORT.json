@@ -1,0 +1,78 @@
+{
+  "metadata_type": "original",
+  "generated_at": "2026-05-08T12:00:00+00:00",
+  "records_checked": 25,
+  "summary": {
+    "total_findings": 8,
+    "by_check": {
+      "orig_title_presence": 1,
+      "orig_images_missing": 2,
+      "orig_genre_presence": 3,
+      "orig_description_too_short": 1,
+      "orig_missing_image_ratio": 1
+    },
+    "by_severity": {
+      "high": 3,
+      "medium": 4,
+      "low": 1
+    }
+  },
+  "findings": [
+    {
+      "check_id": "orig_title_presence",
+      "severity": "high",
+      "message": "Missing title.",
+      "file_ref": "original_movies.json#2",
+      "content_id": "content_12345"
+    },
+    {
+      "check_id": "orig_images_missing",
+      "severity": "medium",
+      "message": "No images found.",
+      "file_ref": "original_movies.json#5",
+      "content_id": "content_12348"
+    },
+    {
+      "check_id": "orig_genre_presence",
+      "severity": "high",
+      "message": "Missing or empty genres.",
+      "file_ref": "original_series.json#1",
+      "content_id": "series_001"
+    },
+    {
+      "check_id": "orig_genre_presence",
+      "severity": "high",
+      "message": "Missing or empty genres.",
+      "file_ref": "original_series.json#8",
+      "content_id": "series_008"
+    },
+    {
+      "check_id": "orig_description_too_short",
+      "severity": "low",
+      "message": "Description is too short.",
+      "file_ref": "original_movies.json#12",
+      "content_id": "content_12357"
+    },
+    {
+      "check_id": "orig_genre_presence",
+      "severity": "high",
+      "message": "Missing or empty genres.",
+      "file_ref": "original_episodes.json#3",
+      "content_id": "episode_003"
+    },
+    {
+      "check_id": "orig_images_missing",
+      "severity": "medium",
+      "message": "No images found.",
+      "file_ref": "original_episodes.json#7",
+      "content_id": "episode_007"
+    },
+    {
+      "check_id": "orig_missing_image_ratio",
+      "severity": "medium",
+      "message": "Missing image ratio 16:9.",
+      "file_ref": "original_movies.json#18",
+      "content_id": "content_12363"
+    }
+  ]
+}

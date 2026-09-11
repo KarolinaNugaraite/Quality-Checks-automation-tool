@@ -1,0 +1,91 @@
+sample_size: 25
+random_seed: 42
+required_languages:
+  - nb
+  - no
+  - nn
+  - en
+min_description_words: 3
+placeholder_descriptions:
+  - n/a
+  - na
+  - tbd
+  - todo
+  - description
+required_image_ratios:
+  - "16:9"
+undefined_image_types:
+  - ""
+  - undefined
+  - staple
+  - unknown
+  - null
+id_keys:
+  - program_id
+  - ProgramId
+  - originalContentId
+  - original_content_id
+  - contentId
+  - content_id
+type_keys:
+  - asset_type
+  - AssetType
+  - type
+  - "@type"
+provider_group_keys:
+  - group
+  - package
+  - provider_group
+kids_flags_keys:
+  - is_kids
+  - kids
+  - audience
+  - target_audience
+candidate_keys:
+  title:
+    - title
+    - Title
+    - name
+    - metadata.title
+  description:
+    - description
+    - Description
+    - synopsis
+    - metadata.description
+  descriptions_block:
+    - descriptions
+    - metadata.descriptions
+  images:
+    - images
+    - image
+    - Image
+    - pictures
+  image_type:
+    - type
+    - name
+  image_ratio:
+    - ratio
+    - aspect_ratio
+  genre:
+    - category
+    - Category
+    - genres.main
+    - genres
+  production_year:
+    - production_year
+    - productionYear
+    - ProductionYear
+  duration:
+    - duration
+    - Duration
+    - durationInSeconds
+    - duration_in_seconds
+  deeplink:
+    - deeplink
+    - deepLink
+    - deeplinks.OPEN.url
+    - deeplinks.PLAY.url
+  series_id:
+    - series_id
+    - seriesId
+    - parent_series_id
